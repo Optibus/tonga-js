@@ -1,12 +1,3 @@
-export type Options = {
-  /**
-   * Only two mode. this will determine which Class is chosen.
-   * Normally prefetch is for the client where flags will be 'getten' many times
-   * And on demand is for the server where it wont happen much
-   */
-  fetchMode: 'on_demand' | 'prefetch';
-};
-
 /**
  * Can be any context attributes that would like ot best to the server
  * when using 'getConfData' or 'getFlag'
@@ -16,6 +7,7 @@ export type ContextAttributes = {
 };
 
 export type Cache = any;
+// export type Cache = { [id: string]: unknown };
 
 type ServerApiFunctions = {
   analyitics?: (s: string) => Promise<void>;

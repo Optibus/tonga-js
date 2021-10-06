@@ -1,8 +1,9 @@
 import { Prefetch } from './prefetch';
-import { ContextAttributes } from './constructor-types';
+import { ContextAttributes, Cache } from './constructor-types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getConfData = (context: ContextAttributes) => new Promise((resolve) => resolve({ a: 1 }));
+const getConfData = (context: ContextAttributes): Promise<Cache> =>
+  new Promise((resolve) => resolve({ a: 1 }));
 
 test('get', () => {
   const preFetch = new Prefetch({ getConfData }, { user: 'me' });
