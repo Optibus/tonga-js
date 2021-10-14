@@ -4,7 +4,7 @@ defaults: &defaults
   working_directory: ~/repo
   resource_class: small
   docker:
-    - image: circleci/node:16.9.1
+    - image: cimg/node:14.16
 
 jobs:
   test:
@@ -44,26 +44,45 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$OREN_NPM_TOKEN" > ~/repo/.npmrc
+      # - run:
+          # name: Authenticate with registry
+          # command: echo "//registry.npmjs.org/:_authToken=$OREN_NPM_TOKEN" > ~/repo/.npmrc
       - run:
           name: build
           command: npm run build
+      - add_ssh_keys:
+          fingerprints:
+            - 84:96:a3:15:9b:f0:82:78:58:33:ef:84:4b:0d:aa:5f
       - run:
-          name: Publish package
-          command: npm publish
+          name: create new git ignore
+          command: |
+            echo -e "StrictHostKeyChecking no\n" >> ~/.ssh/config
+            git config --global user.email "oren@optibus.com"
+            git config --global user.name "orengriffin"
+            git checkout -b main-dist
+            cat .gitignore | grep -v dist > new-gitignore
+            mv new-gitignore .gitignore
+            git add --all
+            git commit -am '[skip ci] build in circle ci'
+            git push origin main-dist -f
+      # - run:
+          # name: Publish package
+          # command: npm publish
 
 workflows:
   version: 2
   test-deploy:
     jobs:
-      - test
+      - test:
+        filters:
+          branches:
+            ignore:
+              - main-dist
+            
       - deploy:
           requires:
             - test
           filters:
-            tags:
-              only: /^v.*/
+            # tags: only: /^v.*/
             branches:
               only: main
