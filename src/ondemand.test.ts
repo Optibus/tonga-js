@@ -45,11 +45,11 @@ test('analytics', (done) => {
   const value = 1;
   const getFlag = createMockGetFlag(path, value, counterObj);
   const ondemand = new Ondemand({ getFlag, analytics }, context);
-  ondemand.get(path).then((resolve) => {
-    emitter.on('invoked', ({ throttleArgs, invocationCounter }: AnalyticsEmitter) => {
+  ondemand.get(path).then(() => {
+    emitter.on('invoked', ({ debounceArgs, invocationCounter }: AnalyticsEmitter) => {
       expect(invocationCounter).toBe(1);
-      const paths = throttleArgs.map((o) => o.flagKey);
-      const values = throttleArgs.map((o) => o.flagValue);
+      const paths = debounceArgs.map((o) => o.flagKey);
+      const values = debounceArgs.map((o) => o.flagValue);
       expect(paths).toEqual(['a']);
       expect(values).toEqual([1]);
       done();

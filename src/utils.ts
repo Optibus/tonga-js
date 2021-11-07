@@ -22,15 +22,15 @@ export function getter(obj: any, path: string): unknown {
 }
 
 /**
- *  a throttle utility function create throttled function, when finally
+ *  a debounce utility function create debounced function, when finally
  *  called will be called with an array of aggregated arguments
- * @param fn the function to be throttled
+ * @param fn the function to be debounced
  * @param ms how many ms after the last invocation to actually invoke fn
  * @param contextAttributes context
  */
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export function throttle(fn: Function, ms: number, contextAttributes: ContextAttributes): Function {
+export function debounce(fn: Function, ms: number, contextAttributes: ContextAttributes): Function {
   let allArgs: any[] = [];
   let timeoutId: ReturnType<typeof setTimeout>;
   return function (...args: any[]) {
@@ -44,22 +44,22 @@ export function throttle(fn: Function, ms: number, contextAttributes: ContextAtt
   };
 }
 
-export function throttleDeco() {
+export function debounceDeco() {
   return function (target: any, propertyKey: string, descriptor: any) {
     const originalFn = descriptor.value;
     descriptor.value = function (...args: any) {
       const returnValue = originalFn.call(this, ...args);
-      if (this.throttledAnal) {
-        const callThrottled = (v: any) => {
-          this.throttledAnal.call(this, {
+      if (this.debouncedAnal) {
+        const callDebounced = (v: any) => {
+          this.debouncedAnal.call(this, {
             flagKey: args[0],
             flagValue: v,
           });
         };
         if (returnValue?.constructor?.name === 'Promise') {
-          returnValue.then(callThrottled);
+          returnValue.then(callDebounced);
         } else {
-          callThrottled(returnValue);
+          callDebounced(returnValue);
         }
       }
       return returnValue;

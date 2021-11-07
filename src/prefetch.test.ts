@@ -1,4 +1,3 @@
-import flatten from 'lodash/flatten';
 import { Prefetch } from './prefetch';
 import { ContextAttributes, Cache } from './constructor-types';
 import EventEmitter from 'events';
@@ -28,10 +27,10 @@ test('analytics', (done) => {
     expect(result).toBe(1);
     result = preFetch.get('b');
     expect(result).toBe(null);
-    emitter.on('invoked', ({ throttleArgs, invocationCounter }: AnalyticsEmitter) => {
+    emitter.on('invoked', ({ debounceArgs, invocationCounter }: AnalyticsEmitter) => {
       expect(invocationCounter).toBe(1);
-      const paths = throttleArgs.map((o) => o.flagKey);
-      const values = throttleArgs.map((o) => o.flagValue);
+      const paths = debounceArgs.map((o) => o.flagKey);
+      const values = debounceArgs.map((o) => o.flagValue);
       expect(paths).toEqual(['a', 'b']);
       expect(values).toEqual([1, null]);
       done();

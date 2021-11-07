@@ -1,6 +1,6 @@
-import { Cache, ContextAttributes, ServerApiFunctionsPrefetch } from './constructor-types';
+import { Cache, ContextAttributes, Options, ServerApiFunctionsPrefetch } from './constructor-types';
 import { Base } from './base';
-import { throttleDeco } from './utils';
+import { debounceDeco } from './utils';
 
 /**
  * Prefetch means the getter will be a sync function,
@@ -13,21 +13,28 @@ export class Prefetch extends Base {
   constructor(
     serverApiFunction: ServerApiFunctionsPrefetch,
     context_attributes: ContextAttributes,
+    options: Options = { isAsync: true },
   ) {
     super(serverApiFunction, context_attributes);
     this.isReady = false;
-    serverApiFunction.getConfData(context_attributes).then((result) => {
+    const { isAsync } = options;
+    const done = (result: Cache) => {
       this.cache = result;
       this.isReady = true;
       this.emit('ready');
-    });
+    };
+    if (isAsync) {
+      serverApiFunction.getConfData(context_attributes).then(done);
+    } else {
+      done(serverApiFunction.getConfData(context_attributes));
+    }
   }
 
   /**
    * Synchronos function
-   * @param path  the path to flag.
+   * @param path the path to flag.
    */
-  @throttleDeco()
+  @debounceDeco()
   get(path: string): Cache {
     if (!this.isReady) {
       throw new Error('not ready yet');

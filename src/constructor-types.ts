@@ -9,26 +9,31 @@ export type ContextAttributes = {
 export type Cache = any;
 // export type Cache = { [id: string]: unknown };
 
-export interface ThrottleArgs {
+export interface DebounceArgs {
   flagKey: string;
   flagValue: unknown;
 }
 
-export type AnalyiticsFnType = (
-  throttleArgs: ThrottleArgs[],
+export type AnalyticsFn = (
+  debounceArgs: DebounceArgs[],
   context: ContextAttributes,
 ) => Promise<void>;
 
-type ServerApiFunctions = {
-  analytics?: AnalyiticsFnType;
-};
+interface ServerApiFunctions {
+  /**
+   *  An optional function can be added to call analyitics - analytics.
+   *  As an optimization it will be debounced. So in order to prevent calling it too many times during one second,
+   *  it will aggregate all calls and will make one call after a full second that it hasnt been called
+   */
+  analytics?: AnalyticsFn;
+}
 
 export interface ServerApiFunctionsPrefetch extends ServerApiFunctions {
   /**
    * this will be called at the constructor
    * @returns a promise that resolves to the entire config Object
    */
-  getConfData: (context: ContextAttributes) => Promise<Cache>;
+  getConfData: (context: ContextAttributes) => Promise<Cache> | Cache;
 }
 
 export interface ServerApiFunctionsOndemand extends ServerApiFunctions {
@@ -37,6 +42,10 @@ export interface ServerApiFunctionsOndemand extends ServerApiFunctions {
    * @returns a promise that resolves to the specific value of the flag
    */
   getFlag: (path: string, context: ContextAttributes) => Promise<Cache>;
+}
+
+export interface Options {
+  isAsync: boolean;
 }
 
 export type Cond = ServerApiFunctionsPrefetch extends ServerApiFunctionsOndemand

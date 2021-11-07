@@ -74,3 +74,26 @@ const context = {
 const cdkConfig = new CdkConfig({ getFlag }, context);
 const flagValue = await cdkConfig.get('flagKey');
 ```
+
+## Analyitics
+The first argument passed in both modes is an object of functions. An optional function can be added to call analyitics -  `analytics`.
+As an optimization it will be throttled. So in order to prevent calling it too many times during one second, it will aggregate all calls and will make one call after a full second that it hasnt been called.
+
+#### Example 
+
+```javascript
+
+export interface ThrottleArgs {
+  flagKey: string;
+  flagValue: unknown;
+}
+
+const analyitics = (throttledArgs: ThrottledArgs[], context) => {
+    return new Promise() {
+        // ajax called that can have in its body the the throtteled args
+    }
+}
+
+const cdkConfig = new CdkConfig({ getFlag, analytics }, context);
+const flagValue = await cdkConfig.get('flagKey');
+```

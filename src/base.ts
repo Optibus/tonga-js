@@ -1,16 +1,17 @@
 import EventEmitter from 'events';
-import { getter, throttle } from './utils';
-import { AnalyiticsFnType, Cache, ContextAttributes } from './constructor-types';
+import { getter, debounce } from './utils';
+import { AnalyticsFn, Cache, ContextAttributes } from './constructor-types';
 
 /**
- * base class that has get function and the cache
+ * base class that has get function and the cache and creates the debounced
+ * analytics function
  */
 
 export class Base extends EventEmitter {
   cache: Cache = {};
   contextAttributes: ContextAttributes;
-  protected throttleMs = 1000;
-  private throttledAnal: AnalyiticsFnType | undefined;
+  protected debounceMs = 1000;
+  private debouncedAnal: AnalyticsFn | undefined;
 
   constructor(serverApiFunction: any, context_attributes: ContextAttributes) {
     super();
@@ -18,9 +19,9 @@ export class Base extends EventEmitter {
     if (serverApiFunction.analytics) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.throttledAnal = throttle(
+      this.debouncedAnal = debounce(
         serverApiFunction.analytics,
-        this.throttleMs,
+        this.debounceMs,
         context_attributes,
       );
     }
