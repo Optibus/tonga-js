@@ -1,6 +1,7 @@
 import { ContextAttributes, ServerApiFunctionsOndemand, Cache } from './constructor-types';
 import { Base } from './base';
 import setter from 'lodash/set';
+import { throttleDeco } from './utils';
 
 /** @module */
 /**
@@ -15,18 +16,17 @@ import setter from 'lodash/set';
  */
 
 export class Ondemand extends Base {
-  contextAttributes: ContextAttributes;
   private getFlag: ServerApiFunctionsOndemand['getFlag'];
 
   constructor(
     serverApiFunctions: ServerApiFunctionsOndemand,
     context_attributes: ContextAttributes,
   ) {
-    super();
-    this.contextAttributes = context_attributes;
+    super(serverApiFunctions, context_attributes);
     this.getFlag = serverApiFunctions.getFlag;
   }
 
+  @throttleDeco()
   async get(path: string): Promise<Cache> {
     let cachedValue = super.get(path);
     if (cachedValue == null) {

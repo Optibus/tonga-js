@@ -1,5 +1,6 @@
 import { Cache, ContextAttributes, ServerApiFunctionsPrefetch } from './constructor-types';
 import { Base } from './base';
+import { throttleDeco } from './utils';
 
 /**
  * Prefetch means the getter will be a sync function,
@@ -7,14 +8,13 @@ import { Base } from './base';
  */
 
 export class Prefetch extends Base {
-  contextAttributes: ContextAttributes | undefined;
   private isReady: boolean;
 
   constructor(
     serverApiFunction: ServerApiFunctionsPrefetch,
     context_attributes: ContextAttributes,
   ) {
-    super();
+    super(serverApiFunction, context_attributes);
     this.isReady = false;
     serverApiFunction.getConfData(context_attributes).then((result) => {
       this.cache = result;
@@ -27,6 +27,7 @@ export class Prefetch extends Base {
    * Synchronos function
    * @param path  the path to flag.
    */
+  @throttleDeco()
   get(path: string): Cache {
     if (!this.isReady) {
       throw new Error('not ready yet');

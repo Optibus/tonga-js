@@ -9,8 +9,18 @@ export type ContextAttributes = {
 export type Cache = any;
 // export type Cache = { [id: string]: unknown };
 
+export interface ThrottleArgs {
+  flagKey: string;
+  flagValue: unknown;
+}
+
+export type AnalyiticsFnType = (
+  throttleArgs: ThrottleArgs[],
+  context: ContextAttributes,
+) => Promise<void>;
+
 type ServerApiFunctions = {
-  analyitics?: (s: string) => Promise<void>;
+  analytics?: AnalyiticsFnType;
 };
 
 export interface ServerApiFunctionsPrefetch extends ServerApiFunctions {
