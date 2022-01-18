@@ -51,10 +51,13 @@ export function debounceDeco() {
       const returnValue = originalFn.call(this, ...args);
       if (this.debouncedAnal) {
         const callDebounced = (v: any) => {
-          this.debouncedAnal.call(this, {
-            flagKey: args[0],
-            flagValue: v,
-          });
+          const typeOfValue = typeof v;
+          if (['string', 'number', 'boolean'].includes(typeOfValue)) {
+            this.debouncedAnal.call(this, {
+              flagKey: args[0],
+              flagValue: v,
+            });
+          }
         };
         if (returnValue?.constructor?.name === 'Promise') {
           returnValue.then(callDebounced);
