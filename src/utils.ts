@@ -52,7 +52,7 @@ export function debounceDeco() {
       if (this.debouncedAnal) {
         const callDebounced = (v: any) => {
           const typeOfValue = typeof v;
-          if (['string', 'number', 'boolean'].includes(typeOfValue)) {
+          if (v === null || ['string', 'number', 'boolean'].includes(typeOfValue)) {
             this.debouncedAnal.call(this, {
               flagKey: args[0],
               flagValue: v,

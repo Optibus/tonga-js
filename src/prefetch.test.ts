@@ -4,7 +4,7 @@ import EventEmitter from 'events';
 import { createAnalytics, AnalyticsEmitter } from './utils-for-tests';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getConfData = (context: ContextAttributes): Promise<Cache> =>
-  new Promise((resolve) => resolve({ a: 1, b: 2 }));
+  new Promise((resolve) => resolve({ a: 1, b: 2, d: { f: 1 } }));
 
 test('get', (done) => {
   const preFetch = new Prefetch({ getConfData }, { user: 'me' });
@@ -29,12 +29,14 @@ test('analytics', (done) => {
     expect(result).toBe(2);
     result = preFetch.get('c');
     expect(result).toBe(null);
+    result = preFetch.get('d');
+    expect(result).toStrictEqual({ f: 1 });
     emitter.on('invoked', ({ debounceArgs, invocationCounter }: AnalyticsEmitter) => {
       expect(invocationCounter).toBe(1);
       const paths = debounceArgs.map((o) => o.flagKey);
       const values = debounceArgs.map((o) => o.flagValue);
-      expect(paths).toEqual(['a', 'b']);
-      expect(values).toEqual([1, 2]);
+      expect(paths).toEqual(['a', 'b', 'c']);
+      expect(values).toEqual([1, 2, null]);
       done();
     });
   });

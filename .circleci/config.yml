@@ -64,6 +64,10 @@ jobs:
             mv new-gitignore .gitignore
             git add --all
             git commit -am '[skip ci] build in circle ci'
+            TAG=$(date +'%m-%d-%Y-%H-%M')
+            echo "$TAG"
+            git tag -a "$TAG" -m 'automated tag from circle ci'
+            git push origin "$TAG"
             git push origin main-dist -f
       # - run:
           # name: Publish package
