@@ -27,6 +27,8 @@ test('analytics', (done) => {
     expect(result).toBe(1);
     result = preFetch.get('b');
     expect(result).toBe(2);
+    result = preFetch.get('b');
+    expect(result).toBe(2);
     result = preFetch.get('c');
     expect(result).toBe(null);
     result = preFetch.get('d');

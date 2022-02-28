@@ -6,6 +6,52 @@
  */
 import { ContextAttributes } from './constructor-types';
 
+function chceksum(obj: any): string {
+  const str = JSON.stringify(obj);
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash.toString(16);
+}
+
+/**
+ * a class that hold an array of objects that each object would be unique
+ *
+ */
+class ObjectSet {
+  dataArray: any[] = [];
+  dataDict: any = {};
+
+  addMany(objects: any[]) {
+    objects.forEach((obj) => this.add(obj));
+  }
+
+  clear() {
+    this.dataArray = [];
+    this.dataDict = {};
+  }
+
+  add(obj: any) {
+    const key = chceksum(obj);
+    if (!this.dataDict[key]) {
+      this.dataDict[key] = obj;
+      this.dataArray.push(obj);
+    }
+    return this;
+  }
+
+  size(): number {
+    return this.dataArray.length;
+  }
+
+  getAll() {
+    return this.dataArray;
+  }
+}
+
 export function getter(obj: any, path: string): unknown {
   const arr = path.split('.');
   let value = obj;
@@ -31,15 +77,16 @@ export function getter(obj: any, path: string): unknown {
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function debounce(fn: Function, ms: number, contextAttributes: ContextAttributes): Function {
-  let allArgs: any[] = [];
   let timeoutId: ReturnType<typeof setTimeout>;
+  const uniqueArgs = new ObjectSet();
   return function (...args: any[]) {
-    allArgs = allArgs.concat(args);
+    uniqueArgs.addMany(args);
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
     timeoutId = setTimeout(() => {
-      fn(allArgs, contextAttributes);
+      fn(uniqueArgs.getAll(), contextAttributes);
+      uniqueArgs.clear();
     }, ms);
   };
 }
