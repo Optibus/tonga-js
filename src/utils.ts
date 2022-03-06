@@ -22,8 +22,8 @@ function chceksum(obj: any): string {
  *
  */
 class ObjectSet {
-  dataArray: any[] = [];
-  dataDict: any = {};
+  private dataArray: Record<string, unknown>[] = [];
+  private dataDict: Record<string, unknown> = {};
 
   addMany(objects: any[]) {
     objects.forEach((obj) => this.add(obj));
@@ -34,7 +34,7 @@ class ObjectSet {
     this.dataDict = {};
   }
 
-  add(obj: any) {
+  add(obj: Record<string, unknown>) {
     const key = chceksum(obj);
     if (!this.dataDict[key]) {
       this.dataDict[key] = obj;
