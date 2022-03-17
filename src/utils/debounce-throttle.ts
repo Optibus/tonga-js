@@ -38,24 +38,28 @@ class DebounceThrottleCreator {
   }
 }
 
+const debounceInstance = new DebounceThrottleCreator(true);
 /**
  *  a debounce utility function create debounced function, when finally
- *  called will be called with an array of aggregated arguments
+ *  called will be called with an array of aggregated unique arguments
+ *  debounced function will be called after ms time only when there are no
+ *  more invokation to the function
  * @param fn the function to be debounced
  * @param ms how many ms after the last invocation to actually invoke fn
  * @param contextAttributes context
  */
-const debounceInstance = new DebounceThrottleCreator(true);
 export const debounce = debounceInstance.createFn();
 
+const throttleInstance = new DebounceThrottleCreator(false);
 /**
- *  a debounce utility function create debounced function, when finally
- *  called will be called with an array of aggregated arguments
+ *  a throttle utility function create throttled function, when finally
+ *  called will be called with an array of aggregated unique arguments.
+ *  throttled function will be called after ms time regardless
+ *  of invokation that happened during ms.
  * @param fn the function to be debounced
  * @param ms how many ms after the last invocation to actually invoke fn
  * @param contextAttributes context
  */
-const throttleInstance = new DebounceThrottleCreator(false);
 export const throttle = throttleInstance.createFn();
 
 export function debounceDeco() {
