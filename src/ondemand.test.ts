@@ -2,7 +2,6 @@ import { Ondemand } from './ondemand';
 import { ContextAttributes } from './constructor-types';
 import { createAnalytics, AnalyticsEmitter } from './utils-for-tests';
 import EventEmitter from 'events';
-import flatten from 'lodash/flatten';
 
 type CounterObj = {
   counter: number;
@@ -54,5 +53,27 @@ test('analytics', (done) => {
       expect(values).toEqual([1]);
       done();
     });
+  });
+});
+
+describe('grave yard', () => {
+  test('no graveyard but still works', async () => {
+    const counterObj = { counter: 0, path: '', context: {} };
+    const path = 'a';
+    const value = 1;
+    const getFlag = createMockGetFlag(path, value, counterObj);
+    const ondemand = new Ondemand({ getFlag }, { user: 'me' });
+    const result = await ondemand.get(path);
+    expect(result).toBe(value);
+  });
+
+  test('no graveyard but still works', async () => {
+    const counterObj = { counter: 0, path: '', context: {} };
+    const path = 'shouldBeDeleted';
+    const value = 1;
+    const getFlag = createMockGetFlag(path, value, counterObj);
+    const ondemand = new Ondemand({ getFlag }, { user: 'me' }, { graveYard: { key: 'graveYard' } });
+    const result = await ondemand.get(path);
+    expect(result).toBe(value);
   });
 });

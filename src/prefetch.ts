@@ -17,7 +17,8 @@ export class Prefetch extends Base {
   ) {
     super(serverApiFunction, context_attributes);
     this.isReady = false;
-    const { isAsync } = options;
+    const { isAsync, graveYard } = options;
+    this.graveYard = graveYard;
     const done = (result: Cache) => {
       this.cache = result;
       this.isReady = true;
@@ -31,7 +32,7 @@ export class Prefetch extends Base {
   }
 
   /**
-   * Synchronos function
+   * Synchronous function
    * @param path the path to flag.
    */
   @debounceDeco()

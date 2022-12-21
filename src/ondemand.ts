@@ -1,4 +1,4 @@
-import { ContextAttributes, ServerApiFunctionsOndemand, Cache } from './constructor-types';
+import { ContextAttributes, ServerApiFunctionsOndemand, Cache, Options } from './constructor-types';
 import { Base } from './base';
 import setter from 'lodash/set';
 import { debounceDeco } from './utils';
@@ -21,8 +21,12 @@ export class Ondemand extends Base {
   constructor(
     serverApiFunctions: ServerApiFunctionsOndemand,
     context_attributes: ContextAttributes,
+    options?: Options,
   ) {
     super(serverApiFunctions, context_attributes);
+    if (options?.graveYard) {
+      this.graveYard = options.graveYard;
+    }
     this.getFlag = serverApiFunctions.getFlag;
   }
 

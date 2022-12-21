@@ -44,8 +44,14 @@ export interface ServerApiFunctionsOndemand extends ServerApiFunctions {
   getFlag: (path: string, context: ContextAttributes) => Promise<Cache>;
 }
 
+export interface GraveYard {
+  key: string;
+  log?: () => void;
+}
+
 export interface Options {
-  isAsync: boolean;
+  isAsync?: boolean;
+  graveYard?: GraveYard;
 }
 
 export type Cond = ServerApiFunctionsPrefetch extends ServerApiFunctionsOndemand
