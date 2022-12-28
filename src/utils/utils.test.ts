@@ -1,4 +1,4 @@
-import { getter, ObjectSet, debounce, throttle } from './index';
+import { _getter as getter, ObjectSet, debounce, throttle } from './index';
 import EventEmitter from 'events';
 
 describe('Util functions', () => {
@@ -13,6 +13,12 @@ describe('Util functions', () => {
       const obj = { a: { b: '1' } };
       const result = getter(obj, 'a.b.c.d');
       expect(result).toBeNull();
+    });
+
+    test('false', () => {
+      const obj = { a: { b: false } };
+      const result = getter(obj, 'a.b');
+      expect(result).toBe(false);
     });
 
     test('array', () => {

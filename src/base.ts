@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { getter, debounce } from './utils';
-import { AnalyticsFn, Cache, ContextAttributes } from './constructor-types';
+import { AnalyticsFn, Cache, ContextAttributes, GraveYard } from './constructor-types';
 
 /**
  * base class that has get function and the cache and creates the debounced
@@ -12,6 +12,7 @@ export class Base extends EventEmitter {
   contextAttributes: ContextAttributes;
   protected debounceMs = 1000;
   private debouncedAnal: AnalyticsFn | undefined;
+  protected graveYard: GraveYard | undefined;
 
   constructor(serverApiFunction: any, context_attributes: ContextAttributes) {
     super();
@@ -28,6 +29,6 @@ export class Base extends EventEmitter {
   }
 
   get(path: string): Cache {
-    return getter(this.cache, path);
+    return getter(this.graveYard?.key, this.graveYard?.log)(this.cache, path);
   }
 }
