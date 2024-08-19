@@ -4,6 +4,7 @@
  */
 export type ContextAttributes = {
   user?: string;
+  customer?: string;
 };
 
 export type Cache = any;
