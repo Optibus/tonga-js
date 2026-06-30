@@ -14,11 +14,13 @@
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet",
     "lint-fix": "eslint '*/**/*.{js,ts,tsx}' --fix"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "np": {
-		"yarn": false,
-		"contents": "dist"
-	},
+    "yarn": false,
+    "contents": "dist"
+  },
   "author": "",
   "license": "ISC",
   "eslint-junit": {
