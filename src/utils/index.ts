@@ -23,14 +23,14 @@ export function _getter(obj: any, path: string): unknown {
 }
 
 export function getter(key: GraveYard['key'] | undefined, log: GraveYard['log'] | undefined) {
-  return (obj: any, path: string) => {
+  return <T = unknown>(obj: any, path: string): T => {
     const result = _getter(obj, path);
     if (!key || result != null) {
-      return result;
+      return result as T;
     }
     const newPath = `${key}.${path}`;
     log?.();
-    return _getter(obj, newPath);
+    return _getter(obj, newPath) as T;
   };
 }
 
