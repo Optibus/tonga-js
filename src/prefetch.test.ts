@@ -20,6 +20,21 @@ test('get', (done) => {
   });
 });
 
+test('get is generic over the expected value type', (done) => {
+  const preFetch = new Prefetch({ getConfData }, { user: 'me' });
+  preFetch.on('ready', () => {
+    // explicit type argument narrows the return type
+    const a: number = preFetch.get<number>('a');
+    const d: { f: number } = preFetch.get<{ f: number }>('d');
+    // no type argument falls back to Cache (any) - stays backward compatible
+    const fallback = preFetch.get('a');
+    expect(a).toBe(1);
+    expect(d).toStrictEqual({ f: 1 });
+    expect(fallback).toBe(1);
+    done();
+  });
+});
+
 test('analytics', (done) => {
   const emitter = new EventEmitter();
   const analytics = createAnalytics(emitter);

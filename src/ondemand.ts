@@ -31,14 +31,14 @@ export class Ondemand extends Base {
   }
 
   @debounceDeco()
-  async get(path: string): Promise<Cache> {
-    let cachedValue = super.get(path);
+  async get<T = Cache>(path: string): Promise<T> {
+    let cachedValue = super.get(path) as T;
     if (cachedValue == null) {
       const value = await this.getFlag(path, this.contextAttributes);
       if (value) {
         setter(this.cache, path, value);
       }
-      cachedValue = super.get(path);
+      cachedValue = super.get(path) as T;
     }
     return cachedValue;
   }

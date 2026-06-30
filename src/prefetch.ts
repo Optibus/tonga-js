@@ -36,10 +36,10 @@ export class Prefetch extends Base {
    * @param path the path to flag.
    */
   @debounceDeco()
-  get(path: string): Cache {
+  get<T = Cache>(path: string): T {
     if (!this.isReady) {
       throw new Error('not ready yet');
     }
-    return super.get(path);
+    return super.get(path) as T;
   }
 }
