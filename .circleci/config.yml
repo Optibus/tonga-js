@@ -50,15 +50,12 @@ jobs:
       - run:
           name: build
           command: npm run build
-      - add_ssh_keys:
-          fingerprints:
-            - 84:96:a3:15:9b:f0:82:78:58:33:ef:84:4b:0d:aa:5f
       - run:
-          name: create new git ignore
+          name: build dist branch and push
           command: |
-            echo -e "StrictHostKeyChecking no\n" >> ~/.ssh/config
-            git config --global user.email "oren@optibus.com"
-            git config --global user.name "orengriffin"
+            git config --global user.email "ci@optibus.com"
+            git config --global user.name "tonga-js-ci"
+            git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/Optibus/tonga-js.git"
             git checkout -b main-dist
             cat .gitignore | grep -v dist > new-gitignore
             mv new-gitignore .gitignore
