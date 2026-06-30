@@ -28,7 +28,7 @@ export class Base extends EventEmitter {
     }
   }
 
-  get(path: string): Cache {
-    return getter(this.graveYard?.key, this.graveYard?.log)(this.cache, path);
+  get<T = Cache>(path: string): T | Promise<T> {
+    return getter(this.graveYard?.key, this.graveYard?.log)<T>(this.cache, path);
   }
 }

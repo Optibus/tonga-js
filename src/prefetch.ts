@@ -40,6 +40,7 @@ export class Prefetch extends Base {
     if (!this.isReady) {
       throw new Error('not ready yet');
     }
-    return super.get(path) as T;
+    // Prefetch's get is synchronous, so narrow Base's sync-or-async return to T.
+    return super.get<T>(path) as T;
   }
 }
