@@ -77,3 +77,28 @@ describe('grave yard', () => {
     expect(result).toBe(value);
   });
 });
+
+describe('accessed flags', () => {
+  test('a flag is recorded with the value it was fetched from the server, and again when cached', async () => {
+    const counterObj = { counter: 0, path: '', context: {} };
+    const getFlag = createMockGetFlag('a', 1, counterObj);
+    const ondemand = new Ondemand({ getFlag }, { user: 'me' });
+
+    await ondemand.get('a');
+    // The cache miss reads the cache before fetching, so the value must be the fetched one and not the miss
+    expect(ondemand.getAccessedFlags()).toStrictEqual({ a: 1 });
+
+    await ondemand.get('a');
+    expect(counterObj.counter).toBe(1);
+    expect(ondemand.getAccessedFlags()).toStrictEqual({ a: 1 });
+  });
+
+  test('a flag the server has no value for is recorded as accessed', async () => {
+    const getFlag = () => Promise.resolve(null);
+    const ondemand = new Ondemand({ getFlag }, { user: 'me' });
+
+    await ondemand.get('a');
+
+    expect(ondemand.getAccessedFlags()).toStrictEqual({ a: null });
+  });
+});
