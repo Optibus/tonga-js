@@ -107,3 +107,52 @@ describe('grave yard', () => {
     expect(mockFn).toBeCalledTimes(1);
   }, 10000);
 });
+
+describe('accessed flags', () => {
+  test('only the flags that were explicitly fetched are recorded, with their values', async () => {
+    const preFetch = new Prefetch({ getConfData }, { user: 'me' });
+    await new Promise((resolve) => preFetch.on('ready', resolve));
+
+    preFetch.get('a');
+    preFetch.get('d.f');
+    preFetch.get('missing');
+
+    // The whole config was pre-fetched into the cache, but only the fetched flags were accessed
+    expect(preFetch.getAccessedFlags()).toStrictEqual({ a: 1, 'd.f': 1, missing: null });
+  });
+
+  test('a flag fetched more than once is recorded once, holding its last value', async () => {
+    const preFetch = new Prefetch(
+      { getConfData: () => testData },
+      { user: 'me' },
+      { isAsync: false },
+    );
+
+    preFetch.get('a');
+    preFetch.cache = { a: 2 };
+    preFetch.get('a');
+
+    expect(preFetch.getAccessedFlags()).toStrictEqual({ a: 2 });
+  });
+
+  test('the returned record is not owned by the instance', async () => {
+    const preFetch = new Prefetch(
+      { getConfData: () => testData },
+      { user: 'me' },
+      { isAsync: false },
+    );
+
+    preFetch.get('a');
+    const accessedFlags = preFetch.getAccessedFlags();
+    accessedFlags.a = 'mutated';
+
+    expect(preFetch.getAccessedFlags()).toStrictEqual({ a: 1 });
+  });
+
+  test('nothing is recorded before the pre-fetch is ready', () => {
+    const preFetch = new Prefetch({ getConfData }, { user: 'me' });
+
+    expect(() => preFetch.get('a')).toThrow();
+    expect(preFetch.getAccessedFlags()).toStrictEqual({});
+  });
+});
